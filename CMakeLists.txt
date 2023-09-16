@@ -4,7 +4,8 @@ set(CMAKE_BUILD_TYPE Release)
 project(pancake)
 
 set(SRC
-    src/pancake.cpp    
+    src/pancake.cpp
+    src/filenameFunctions.cpp
 )
 
 set( OpenCV_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/opencv/build )
