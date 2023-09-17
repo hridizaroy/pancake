@@ -1,9 +1,4 @@
-#include <iostream>
-#include <string>
-
-#include <opencv2/opencv.hpp>
-
-#pragma once
+#include "gain.h"
 
 cv::Mat changeGain(const cv::Mat& src, float g) {
 	cv::Mat dst;

@@ -1,10 +1,4 @@
-#include <iostream>
-#include <string>
-#include <algorithm>
-
-#include <opencv2/opencv.hpp>
-
-#pragma once
+#include "vibrance.h"
 
 cv::Mat changeVibrance(cv::Mat src, float s) {
 	cv::Mat dst, temp;
