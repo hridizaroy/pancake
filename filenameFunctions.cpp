@@ -1,7 +1,4 @@
-
-#include <string>
-#include <Windows.h>
-#include <tchar.h>
+#include "filenameFunctions.h"
 
 // Function to open windows file explorer and to return string of selected filename
 std::string getFileName()
