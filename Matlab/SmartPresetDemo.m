@@ -1,15 +1,15 @@
 close all;
 clear;
 
-brightness = 0; %Linear Brightness Control
+brightness = 7; %Linear Brightness Control
 gain = 1;       %A Scalar exposure increase(Experimental)
 % contrast = 1;   %A Scalar Contrast control(Experimental)
 color = 0;      %Color Control
-warmth = 0;     %Temperature Control
+warmth = 50;     %Temperature Control
 % saturation = 1;
 
-a0 = imread("lenna_color.tif");
-b0 = imread("harbor.tif");
+a0 = imread("baboon.tiff");
+b0 = imread("lenna_color.tif");
 
 %Map Size
 ra = size(a0, 1);
@@ -42,6 +42,46 @@ a1 = hsv2rgb(a1);
 a1 = uint8(a1*255);
 
 
+%Warmth
+% a1 = rgb2lab(a1);
+% 
+% % a1(:,:,3) = (a1(:,:,3)) + (ones(ra, ca, "double") * warmth*tan(45)*200/500);
+% a1(:,:,2) = (a1(:,:,2)) + (ones(ra, ca, "double") * warmth);
+% a1(:,:,3) = (a1(:,:,3)) + (ones(ra, ca, "double") * warmth * 5);
+% 
+% 
+% 
+% 
+% a1VBlue = mean(a1(:,:,3), "all");
+% a1VRed = mean(a1(:,:,2), "all");
+% 
+% a1 = lab2rgb(a1);
+% a1 = uint8(a1*255);
+
+
+a1temp = double(a1);
+
+%Temp Adjustment
+a1temp(:,:,1) = (a1temp(:,:,1)) + (ones(ra, ca, "double") * warmth);
+a1temp(:,:,3) = (a1temp(:,:,3)) - (ones(ra, ca, "double") * warmth);
+
+%Temp Vectors
+a1VWarm = mean(a1temp(:,:,1), "all");
+a1VCold = mean(a1temp(:,:,3), "all");
+
+%Clamp
+a1temp(a1temp < 0) = 0;         
+a1temp(a1temp > 255) = 255;
+
+%Store
+a1 = uint8(a1temp);
+
+
+
+
+
+
+
 b1 = rgb2hsv(b0);
 
 %Find Vectors of b0
@@ -65,6 +105,30 @@ b1VS = mean(b1(:,:,2), "all")*255;
 %Convert to RGB
 b1 = hsv2rgb(b1);
 b1 = uint8(b1*255);
+
+%Warmth
+b1temp = double(b1);
+
+%Temp b0 Vector
+b0VWarm = mean(b1temp(:,:,1), "all");
+b0VCold = mean(b1temp(:,:,3), "all");
+
+%"Temp Match"
+b1temp(:,:,1) = (b1temp(:,:,1)) + (ones(rb, cb, "double") * (a1VWarm - b0VWarm));
+b1temp(:,:,3) = (b1temp(:,:,3)) + (ones(rb, cb, "double") * (a1VCold - b0VCold));
+
+%Temp b1 Vector
+b1VWarm = mean(b1temp(:,:,1), "all");
+b1VCold = mean(b1temp(:,:,3), "all");
+
+%Clamp
+b1temp(b1temp < 0) = 0;
+b1temp(b1temp > 255) = 255;
+
+b1 = uint8(b1temp);
+
+slider = b1VB - b0VB
+
 % b(:,:,2) = a1(:,:,2) * 255;
 
 %Display Images
