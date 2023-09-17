@@ -1,73 +1,84 @@
 close all;
 clear;
 
-brightness = 0;
-gain = 1;
-contrast = 1;
-vibrance = 0;
-saturation = 1;
+brightness = 0; %Linear Brightness Control
+gain = 1;       %A Scalar exposure increase(Experimental)
+% contrast = 1;   %A Scalar Contrast control(Experimental)
+color = 0;      %Color Control
+warmth = 0;     %Temperature Control
+% saturation = 1;
 
 a0 = imread("lenna_color.tif");
 b0 = imread("harbor.tif");
 
-
+%Map Size
 ra = size(a0, 1);
 ca = size(a0,2);
 rb = size(b0, 1);
 cb = size(b0,2);
 
 
-b = zeros(ra,ca,3, "uint8");
+a1 = rgb2hsv(a0); %Convert RGB to HSV(Hue, Saturation, Value)
 
-a1 = rgb2hsv(a0);
-a1(:,:,3) = (a1(:,:,3) * gain) + (ones(ra, ca, "double") * brightness/255);
-a1(:,:,2) = (a1(:,:,2)) + (ones(ra, ca, "double") * vibrance/255);
-a1(:,:,2) = (a1(:,:,2)*saturation) + (ones(ra, ca, "double") - saturation);
+%Offset the Distribution of Pixel Values for edit
+a1(:,:,3) = (a1(:,:,3) * gain) + (ones(ra, ca, "double") * brightness/255); 
+a1(:,:,2) = (a1(:,:,2)) + (ones(ra, ca, "double") * color/255);
 
+% a1(:,:,2) = (a1(:,:,2)*saturation) + (ones(ra, ca, "double") - saturation);
 
-a1VC = mean(a1(:,:,3), "all");
-a1(:,:,3) = a1(:,:,3) - a1VC;
-stda1 = std(a1(:,:,3), 0, "all");
-tgtStda1 = std(a1(:,:,3), 0, "all")*contrast;
-a1(:,:,3) = a1(:,:,3) * (contrast) + a1VC;
+%EXPERIMENTAL Contrast not functional
+% a1VC = mean(a1(:,:,3), "all");
+% a1(:,:,3) = a1(:,:,3) - a1VC;
+% stda1 = std(a1(:,:,3), 0, "all");
+% tgtStda1 = std(a1(:,:,3), 0, "all")*contrast;
+% a1(:,:,3) = a1(:,:,3) * (contrast) + a1VC;
 
+%Vectors Values for A1
 a1VB = mean(a1(:,:,3), "all")*255;
 a1VS = mean(a1(:,:,2), "all")*255;
 
+%Convert A1 to an RGB for Display
 a1 = hsv2rgb(a1);
 a1 = uint8(a1*255);
 
+
 b1 = rgb2hsv(b0);
 
+%Find Vectors of b0
+b0VB = mean(b1(:,:,3), "all")*255;
+b0VS = mean(b1(:,:,2), "all")*255;
+
+%Shift the Vectors to form image b1
+b1(:,:,3) = b1(:,:,3) + (ones(rb, cb, "double") * (a1VB/255 - b0VB/255));
+b1(:,:,2) = b1(:,:,2) + (ones(rb, cb, "double") * (a1VS/255 - b0VS/255));
+
+%EXPERIMENTAL Contrast not functional
+% b1VC = mean(b1(:,:,3), "all");
+% b1(:,:,3) = b1(:,:,3) - b1VC;
+% stdb1 = std(b1(:,:,3), 0, "all");
+% b1(:,:,3) = b1(:,:,3) * (tgtStda1/stdb1) + b1VC;
+
+%b1 Vector should match a1
 b1VB = mean(b1(:,:,3), "all")*255;
 b1VS = mean(b1(:,:,2), "all")*255;
-b1(:,:,3) = b1(:,:,3) + (ones(rb, cb, "double") * (a1VB/255 - b1VB/255));
-b1(:,:,2) = b1(:,:,2) + (ones(rb, cb, "double") * (a1VS/255 - b1VS/255));
 
-b1VC = mean(b1(:,:,3), "all");
-b1(:,:,3) = b1(:,:,3) - b1VC;
-stdb1 = std(b1(:,:,3), 0, "all");
-b1(:,:,3) = b1(:,:,3) * (tgtStda1/stdb1) + b1VC;
-
-b1VBAfter = mean(b1(:,:,3), "all")*255;
-b1VSAfter = mean(b1(:,:,2), "all")*255;
-
+%Convert to RGB
 b1 = hsv2rgb(b1);
 b1 = uint8(b1*255);
 % b(:,:,2) = a1(:,:,2) * 255;
 
-
+%Display Images
 fig1 = figure;
 imshow(a0)
 
 fig2 = figure;
 imshow(a1);
 
-% fig3 = figure;
-% imshow(b0)
-% 
-% fig4 = figure;
-% imshow(b1);
+fig3 = figure;
+imshow(b0)
+
+fig4 = figure;
+imshow(b1);
 
 
 
