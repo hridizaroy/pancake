@@ -8,4 +8,6 @@
 * @param brightnessAmount amount to change brightness by
 * @return modified image with brightness changed
 */
-cv::Mat changeBrightness(const cv::Mat& src, double brightnessAmount);
+cv::Mat changeBrightness(const cv::Mat& src, float brightnessAmount, float& mean);
+
+int characterizeBrightness(float mean, cv::Mat src1);

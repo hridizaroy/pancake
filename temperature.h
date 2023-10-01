@@ -8,4 +8,6 @@
 * @param temperatureAmount amount added to red channel and subtracted from blue channel
 * @return modified image with temperature changed
 */
-cv::Mat changeTemperature(const cv::Mat& src, int temperatureAmount);
+cv::Mat changeTemperature(const cv::Mat& src, int temperatureAmount, float& meanR, float& meanB);
+
+int characterizeTemperature(float meanR, float meanB, cv::Mat src1);

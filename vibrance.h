@@ -8,4 +8,6 @@
 * @param s vibrance amount added to image
 * @return modified image with vibrance changed
 */
-cv::Mat changeVibrance(cv::Mat src, float s);
+cv::Mat changeVibrance(cv::Mat src, float s, float& mean);
+
+int characterizeVibrance(float mean, cv::Mat src1);
